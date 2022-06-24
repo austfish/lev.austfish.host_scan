@@ -34,14 +34,15 @@ def hostScan(hosts: list = ["world.cn"], ips: list = ["127.0.0.1"]) -> Cr:
         import sys
         sys.path.append('/usr/local/lib/python3.10/site-packages')
         import requests
+        import re
         logger.debug("[lev app - hello world] log from container")
         logger.info('run')
         #读取host地址
         results = []
-        for ip in ips:
+        for host in hosts:
             http_s = ['http','https']
             for h in http_s :
-                for host in hosts:
+                for ip in ips:
                     headers = {'Host':host,'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'}
                     try:
                         r = requests.session()
@@ -52,13 +53,13 @@ def hostScan(hosts: list = ["world.cn"], ips: list = ["127.0.0.1"]) -> Cr:
                         info = (ip,host,h,len(rhost.text),title)
                         results.append(info)
                         logger.info(info)
-                    except Exception :
-                        error = ip + " --- " + host + " --- 访问失败！~"
+                    except Exception as e:
+                        error = ip + " --- " + host + " --- 访问失败！~ " + e
                         logger.debug(error)
         ctx.set(msg=f"Get count, {len(results)}!")
         
 
-    return Cr("4c2376401edc", entry=entry())
+    return Cr(".austfish.host_scan:v1.0", entry=entry())
 
 
 __lev__ = annot.meta([hostScan],
